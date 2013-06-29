@@ -15,9 +15,11 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
+
 /**
  * ModelReadTest
  *
@@ -27,7 +29,7 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * testExists function
- * @retun void
+ * @return void
  */
 	public function testExists() {
 		$this->loadFixtures('User');
@@ -3040,7 +3042,7 @@ class ModelReadTest extends BaseModelTest {
 		$Apple = new Apple();
 		$result = $Apple->find('threaded');
 		$result = Hash::extract($result, '{n}.children');
-		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$expected = array(array(), array(), array(), array(), array(), array(), array());
 		$this->assertEquals($expected, $result);
 	}
 
@@ -3055,7 +3057,7 @@ class ModelReadTest extends BaseModelTest {
 		$Model->recursive = -1;
 		$result = $Model->find('threaded');
 		$result = Hash::extract($result, '{n}.children');
-		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$expected = array(array(), array(), array(), array(), array(), array(), array());
 		$this->assertEquals($expected, $result);
 
 		$result = $Model->find('threaded', array('parent' => 'mother_id'));

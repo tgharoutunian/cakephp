@@ -15,7 +15,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -130,7 +130,7 @@ class ProjectTask extends AppShell {
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
 				$this->err(__d('cake_console', 'Could not set permissions on %s', $path . DS . 'tmp'));
-				$this->out(__d('cake_console', 'chmod -R 0777 %s', $path . DS . 'tmp'));
+				$this->out('chmod -R 0777 ' . $path . DS . 'tmp');
 				$success = false;
 			}
 			if ($success) {

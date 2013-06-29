@@ -7,12 +7,13 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright   Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link        http://cakephp.org CakePHP(tm) Project
- * @package     Cake.View.Helper
- * @since       CakePHP(tm) v 0.10.0.1076
- * @license     MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       Cake.View.Helper
+ * @since         CakePHP(tm) v 0.10.0.1076
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('ClassRegistry', 'Utility');
 App::uses('AppHelper', 'View/Helper');
 App::uses('Hash', 'Utility');
@@ -1734,6 +1735,7 @@ class FormHelper extends AppHelper {
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
+ * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
  * - `confirm` - Can be used instead of $confirmMessage.
  * - Other options is the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
@@ -2112,6 +2114,7 @@ class FormHelper extends AppHelper {
 		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
+				$year = null;
 				extract($value);
 				$attributes['value'] = $year;
 			} else {
@@ -2270,8 +2273,8 @@ class FormHelper extends AppHelper {
  */
 	protected function _dateTimeSelected($select, $fieldName, $attributes) {
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value) && isset($value[$select])) {
-				$attributes['value'] = $value[$select];
+			if (is_array($value)) {
+				$attributes['value'] = isset($value[$select]) ? $value[$select] : null;
 			} else {
 				if (empty($value)) {
 					if (!$attributes['empty']) {
@@ -2303,6 +2306,7 @@ class FormHelper extends AppHelper {
 		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
+				$meridian = null;
 				extract($value);
 				$attributes['value'] = $meridian;
 			} else {
@@ -2358,6 +2362,9 @@ class FormHelper extends AppHelper {
 
 		if ($attributes['value'] === null && $attributes['empty'] != true) {
 			$attributes['value'] = time();
+			if (!empty($attributes['maxYear']) && $attributes['maxYear'] < date('Y')) {
+				$attributes['value'] = strtotime(date($attributes['maxYear'] . '-m-d'));
+			}
 		}
 
 		if (!empty($attributes['value'])) {
@@ -2652,7 +2659,7 @@ class FormHelper extends AppHelper {
 					) {
 						$htmlOptions['disabled'] = 'disabled';
 					}
-					if ($hasDisabled && !$disabledIsArray) {
+					if ($hasDisabled && !$disabledIsArray && $attributes['style'] === 'checkbox') {
 						$htmlOptions['disabled'] = $attributes['disabled'] === true ? 'disabled' : $attributes['disabled'];
 					}
 

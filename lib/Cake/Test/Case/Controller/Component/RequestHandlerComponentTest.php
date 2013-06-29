@@ -15,8 +15,9 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Controller', 'Controller');
 App::uses('RequestHandlerComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
@@ -821,7 +822,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * array URLs into their correct string ones, and adds base => false so
  * the correct URLs are generated.
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
+ * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
  * @return void
  */
 	public function testBeforeRedirectCallbackWithArrayUrl() {
@@ -856,7 +857,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$controller = $this->getMock('Controller', array('header'));
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'), array(&$this->Controller->Components));
-		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader','statusCode'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader', 'statusCode'));
 		$RequestHandler->request = $this->getMock('CakeRequest');
 		$RequestHandler->request->expects($this->once())->method('is')
 			->with('ajax')

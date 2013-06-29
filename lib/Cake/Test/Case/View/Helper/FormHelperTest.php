@@ -15,8 +15,9 @@
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('ClassRegistry', 'Utility');
 App::uses('Controller', 'Controller');
 App::uses('View', 'View');
@@ -30,7 +31,6 @@ App::uses('Router', 'Routing');
 /**
  * ContactTestController class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
@@ -46,7 +46,6 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class Contact extends CakeTestModel {
@@ -138,7 +137,6 @@ class Contact extends CakeTestModel {
 /**
  * ContactTagsContact class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactTagsContact extends CakeTestModel {
@@ -176,7 +174,6 @@ class ContactTagsContact extends CakeTestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactNonStandardPk extends Contact {
@@ -184,7 +181,7 @@ class ContactNonStandardPk extends Contact {
 /**
  * primaryKey property
  *
- * @var string 'pk'
+ * @var string
  */
 	public $primaryKey = 'pk';
 
@@ -205,7 +202,6 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ContactTag extends Model {
@@ -233,7 +229,6 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class UserForm extends CakeTestModel {
@@ -274,7 +269,6 @@ class UserForm extends CakeTestModel {
 /**
  * OpenidUrl class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class OpenidUrl extends CakeTestModel {
@@ -330,7 +324,6 @@ class OpenidUrl extends CakeTestModel {
 /**
  * ValidateUser class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateUser extends CakeTestModel {
@@ -380,7 +373,6 @@ class ValidateUser extends CakeTestModel {
 /**
  * ValidateProfile class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateProfile extends CakeTestModel {
@@ -440,7 +432,6 @@ class ValidateProfile extends CakeTestModel {
 /**
  * ValidateItem class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class ValidateItem extends CakeTestModel {
@@ -490,7 +481,6 @@ class ValidateItem extends CakeTestModel {
 /**
  * TestMail class
  *
- * @package	   cake
  * @package       Cake.Test.Case.View.Helper
  */
 class TestMail extends CakeTestModel {
@@ -507,8 +497,7 @@ class TestMail extends CakeTestModel {
 /**
  * FormHelperTest class
  *
- * @package	   cake
- * @subpackage       Cake.Test.Case.View.Helper
+ * @package       Cake.Test.Case.View.Helper
  * @property FormHelper $Form
  */
 class FormHelperTest extends CakeTestCase {
@@ -535,6 +524,7 @@ class FormHelperTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		Configure::write('Config.language', 'eng');
 		Configure::write('App.base', '');
 		Configure::delete('Asset');
 		$this->Controller = new ContactTestController();
@@ -1679,7 +1669,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
@@ -2281,7 +2271,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('prueba', array(
 			'type' => 'time', 'timeFormat' => 24 , 'dateFormat' => 'DMY' , 'minYear' => 2008,
-			'maxYear' => date('Y') + 1 ,'interval' => 15
+			'maxYear' => date('Y') + 1 , 'interval' => 15
 		));
 		$result = explode(':', $result);
 		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
@@ -4548,6 +4538,125 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = true;
+		$result = $this->Form->input('Contact.multiple', array('multiple' => 'multiple', 'disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ContactMultiple')),
+			'Multiple',
+			'/label',
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][multiple][]', 'disabled' => 'disabled', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test generating select with disabled elements.
+ *
+ * @return void
+ */
+	public function testSelectWithDisabledElements() {
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array(2, 3);
+		$result = $this->Form->select('Model.field', $options, array('disabled' => $disabled));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField'
+			),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3', 'disabled' => 'disabled')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = array('2', '3x');
+		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ModelField')),
+			'Field',
+			'/label',
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2', 'disabled' => 'disabled')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x', 'disabled' => 'disabled')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
+		$disabled = true;
+		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
+		$expected = array(
+			array('div' => array('class' => 'input select')),
+			array('label' => array('for' => 'ModelField')),
+			'Field',
+			'/label',
+			'select' => array(
+				'name' => 'data[Model][field]', 'id' => 'ModelField', 'disabled' => 'disabled'
+			),
+			array('option' => array('value' => '1')),
+			'One',
+			'/option',
+			array('option' => array('value' => '2')),
+			'Two',
+			'/option',
+			array('option' => array('value' => '3')),
+			'Three',
+			'/option',
+			array('option' => array('value' => '3x')),
+			'Stringy',
+			'/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6520,6 +6629,94 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testInputDate method
+ *
+ * Test various inputs with type date and different dateFormat values.
+ * Failing to provide a dateFormat key should not error.
+ * It should simply not pre-select any value then.
+ *
+ * @return void
+ */
+	public function testInputDate() {
+		$this->Form->request->data = array(
+			'User' => array(
+				'month_year' => array('month' => date('m')),
+				'just_year' => array('month' => date('m')),
+				'just_month' => array('year' => date('Y')),
+				'just_day' => array('month' => date('m')),
+			)
+		);
+		$this->Form->create('User');
+		$result = $this->Form->input('month_year',
+				array(
+					'label' => false,
+					'div' => false,
+					'type' => 'date',
+					'dateFormat' => 'MY',
+					'minYear' => 2006,
+					'maxYear' => 2008
+				)
+		);
+		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
+		$this->assertNotContains('value="2008" selected="selected"', $result);
+
+		$result = $this->Form->input('just_year',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'Y',
+				'minYear' => date('Y'),
+				'maxYear' => date('Y', strtotime('+20 years'))
+			)
+		);
+		$this->assertNotContains('value="' . date('Y') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_month',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'M',
+				'empty' => false,
+			)
+		);
+		$this->assertNotContains('value="' . date('m') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_day',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'D',
+				'empty' => false,
+			)
+		);
+		$this->assertNotContains('value="' . date('d') . '" selected="selected"', $result);
+	}
+
+/**
+ * testInputDateMaxYear method
+ *
+ * Let's say we want to only allow users born from 2006 to 2008 to register
+ * This being the first singup page, we still don't have any data
+ *
+ * @return void
+ */
+	public function testInputDateMaxYear() {
+		$this->Form->request->data = array();
+		$this->Form->create('User');
+		$result = $this->Form->input('birthday',
+				array(
+					'label' => false,
+					'div' => false,
+					'type' => 'date',
+					'dateFormat' => 'DMY',
+					'minYear' => 2006,
+					'maxYear' => 2008
+				)
+		);
+		$this->assertContains('value="2008" selected="selected"', $result);
+	}
+
+/**
  * testTextArea method
  *
  * @return void
@@ -7128,7 +7325,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
-				'action' => '/contact_non_standard_pks/edit/1','accept-charset' => $encoding
+				'action' => '/contact_non_standard_pks/edit/1', 'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -7373,7 +7570,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testCreateWithAcceptCharset() {
 		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
+				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
 			)
 		);
 		$expected = array(
